@@ -1,0 +1,105 @@
+services:
+  discovery-service:
+    build:
+      context: ./discovery-service
+      dockerfile: Dockerfile
+    container_name: discovery-service
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8761
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false
+      - EUREKA_CLIENT_FETCH_REGISTRY=false
+    networks:
+      - ebank-net
+
+  customer-ms:
+    build:
+      context: ./customer-ms
+      dockerfile: Dockerfile
+    container_name: customer-ms
+    ports:
+      - "8087:8087"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8087
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - SPRING_CLOUD_DISCOVERY_ENABLED=true
+    depends_on:
+      - discovery-service
+    networks:
+      - ebank-net
+
+  ebank-service:
+    build:
+      context: ./ebank-service
+      dockerfile: Dockerfile
+    container_name: ebank-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8081
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - SPRING_CLOUD_DISCOVERY_ENABLED=true
+    depends_on:
+      - discovery-service
+    networks:
+      - ebank-net
+
+  ebank-boot:
+    build:
+      context: ./ebank-boot
+      dockerfile: Dockerfile
+    container_name: ebank-boot
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=8090
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - SPRING_CLOUD_DISCOVERY_ENABLED=true
+      - SPRING_AI_MCP_CLIENT_STREAMABLE_HTTP_CONNECTIONS_CUSTOMER_URL=http://customer-ms:8087/mcp
+      - SPRING_AI_MCP_CLIENT_STREAMABLE_HTTP_CONNECTIONS_BANKACCOUNT_URL=http://ebank-service:8081/mcp
+      - GROQ_API_KEY=${GROQ_API_KEY:-dummy_key}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-dummy_token}
+    depends_on:
+      - discovery-service
+      - customer-ms
+      - ebank-service
+    networks:
+      - ebank-net
+
+  gateway-service:
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
+    container_name: gateway-service
+    ports:
+      - "9999:9999"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SERVER_PORT=9999
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka/
+      - SPRING_CLOUD_DISCOVERY_ENABLED=true
+    depends_on:
+      - discovery-service
+    networks:
+      - ebank-net
+
+  angular-front:
+    build:
+      context: ./angular-front
+      dockerfile: Dockerfile
+    container_name: angular-front
+    ports:
+      - "80:80"
+    depends_on:
+      - gateway-service
+    networks:
+      - ebank-net
+
+networks:
+  ebank-net:
+    driver: bridge
