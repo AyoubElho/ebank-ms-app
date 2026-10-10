@@ -1,0 +1,67 @@
+<div class="container mt-5">
+  <h2 class="mb-4">Bank Accounts</h2>
+  @if (loadService.isLoading()){
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  }
+  @if (accounts$ | async; as state) {
+
+    @if (state.status === 0) {
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover shadow-sm">
+          <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Created At</th>
+            <th>Balance</th>
+            <th>Type</th>
+            <th>Customer ID</th>
+          </tr>
+          </thead>
+
+          <tbody>
+            @for (account of state.accounts ?? []; track account.id) {
+              <tr>
+                <td>{{ account.id }}</td>
+
+                <td>
+                  {{ account.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}
+                </td>
+
+                <td class="text-success fw-bold">
+                  {{ account.balance | number:'1.2-2' }} MAD
+                </td>
+
+                <td>
+                  <span
+                    class="badge"
+                    [class.bg-success]="account.type === 'SAVINGS-ACCOUNT'"
+                    [class.bg-primary]="account.type === 'CURRENT-ACCOUNT'">
+                    {{ account.type }}
+                  </span>
+                </td>
+
+                <td>{{ account.customerId }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-center py-4">
+                  No accounts found.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (state.status === 1) {
+      <div class="alert alert-danger" role="alert">
+        <strong>Error loading accounts:</strong>
+        {{ state.errorMessage || 'An unexpected error occurred.' }}
+      </div>
+    }
+
+  }
+</div>

@@ -12,6 +12,7 @@ import java.util.Date;
 
 @SpringBootApplication
 @EnableFeignClients
+
 public class EbankServiceApplication {
 
     public static void main(String[] args) {
