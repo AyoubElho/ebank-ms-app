@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Component
-@ConditionalOnExpression("T(org.springframework.util.StringUtils).hasText('${telegram.bot.token:}') && !'${telegram.bot.token:}'.equals('dummy_token')")
+@ConditionalOnExpression("'${telegram.bot.token:}'.matches('^[0-9]+:.*')")
 public class TelegramBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(TelegramBot.class);
