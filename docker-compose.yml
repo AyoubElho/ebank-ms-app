@@ -4,6 +4,7 @@ services:
       context: ./discovery-service
       dockerfile: Dockerfile
     container_name: discovery-service
+    restart: on-failure
     ports:
       - "8761:8761"
     environment:
@@ -19,6 +20,7 @@ services:
       context: ./customer-ms
       dockerfile: Dockerfile
     container_name: customer-ms
+    restart: on-failure
     ports:
       - "8087:8087"
     environment:
@@ -36,6 +38,7 @@ services:
       context: ./ebank-service
       dockerfile: Dockerfile
     container_name: ebank-service
+    restart: on-failure
     ports:
       - "8081:8081"
     environment:
@@ -53,6 +56,7 @@ services:
       context: ./ebank-boot
       dockerfile: Dockerfile
     container_name: ebank-boot
+    restart: on-failure
     ports:
       - "8090:8090"
     environment:
@@ -76,6 +80,7 @@ services:
       context: ./gateway-service
       dockerfile: Dockerfile
     container_name: gateway-service
+    restart: on-failure
     ports:
       - "9999:9999"
     environment:
@@ -93,6 +98,7 @@ services:
       context: ./angular-front
       dockerfile: Dockerfile
     container_name: angular-front
+    restart: on-failure
     ports:
       - "80:80"
     depends_on:
