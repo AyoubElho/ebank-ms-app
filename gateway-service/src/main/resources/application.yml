@@ -5,6 +5,25 @@ spring:
         locator:
           enabled: true
           lower-case-service-id: false
+      routes:
+        - id: ebank-service
+          uri: lb://EBANK-SERVICE
+          predicates:
+            - Path=/EBANK-SERVICE/**
+          filters:
+            - StripPrefix=1
+        - id: customer-ms
+          uri: lb://CUSTOMER-MS
+          predicates:
+            - Path=/CUSTOMER-MS/**
+          filters:
+            - StripPrefix=1
+        - id: ebank-boot
+          uri: lb://EBANK-BOOT
+          predicates:
+            - Path=/EBANK-BOOT/**
+          filters:
+            - StripPrefix=1
       globalcors:
         cors-configurations:
           '[/**]':
@@ -19,3 +38,12 @@ spring:
               - PATCH
             allowedHeaders: "*"
             allowCredentials: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true
