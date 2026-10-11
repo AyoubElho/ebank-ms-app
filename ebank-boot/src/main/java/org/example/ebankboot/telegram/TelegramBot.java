@@ -4,6 +4,7 @@ import org.example.ebankboot.agents.EbankAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
@@ -15,6 +16,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Component
+@ConditionalOnExpression("T(org.springframework.util.StringUtils).hasText('${telegram.bot.token:}') && !'${telegram.bot.token:}'.equals('dummy_token')")
 public class TelegramBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(TelegramBot.class);
@@ -23,7 +25,7 @@ public class TelegramBot implements SpringLongPollingBot, LongPollingSingleThrea
     private final EbankAgent ebankAgent;
     private final TelegramClient telegramClient;
 
-    public TelegramBot(@Value("${telegram.bot.token}") String botToken, EbankAgent ebankAgent) {
+    public TelegramBot(@Value("${telegram.bot.token:}") String botToken, EbankAgent ebankAgent) {
         this.botToken = botToken;
         this.ebankAgent = ebankAgent;
         this.telegramClient = new OkHttpTelegramClient(botToken);
