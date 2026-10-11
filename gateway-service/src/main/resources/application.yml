@@ -1,11 +1,21 @@
 spring:
   cloud:
     gateway:
-      server:
-        webflux:
-          globalcors:
-            cors-configurations:
-              '[/**]':
-                allowedOrigins: "*"
-                allowedMethods: "*"
-                allowedHeaders: "*"
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: false
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - HEAD
+              - PATCH
+            allowedHeaders: "*"
+            allowCredentials: true

@@ -14,7 +14,7 @@ public class BankAccountRestController {
     @Autowired
     private BankAccountService bankAccountService;
 
-    @GetMapping("/")
+    @GetMapping({"", "/"})
     public List<BankAccount> customerList() {
         return bankAccountService.findAll();
     }
@@ -24,7 +24,7 @@ public class BankAccountRestController {
         return bankAccountService.findById(id);
     }
 
-    @PostMapping("/")
+    @PostMapping({"", "/"})
     public BankAccount save(@RequestBody BankAccount bankAccount) {
         return bankAccountService.save(bankAccount);
     }

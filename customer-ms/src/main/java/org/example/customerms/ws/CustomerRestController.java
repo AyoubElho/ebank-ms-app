@@ -14,7 +14,7 @@ public class CustomerRestController {
     @Autowired
     private CustomerService customerService;
 
-    @GetMapping("/")
+    @GetMapping({"", "/"})
     public List<Customer> customerList() {
         return customerService.findAll();
     }
@@ -24,7 +24,7 @@ public class CustomerRestController {
         return customerService.findById(id);
     }
 
-    @PostMapping("/")
+    @PostMapping({"", "/"})
     public Customer save(@RequestBody Customer customer) {
         return customerService.save(customer);
     }
